@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body * {
+        margin: 10px;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <form onclick="alert('form')">
+      <!-- form이 클릭되면 alert('form')을 실행 -->
+      Form
+      <div onclick="alert('div')">
+        <!-- div가 클릭되면 alert('div')을 실행 -->
+        div
+        <p onclick="event.stopPropagation()">
+          <!-- 중지 -->
+          p
+        </p>
+      </div>
+    </form>
+    <!-- <script>
+      const form = document.querySelector("form");
+      const div = document.querySelector("div");
+      const p = document.querySelector("p");
+
+      // event.target ===> 실제 이벤트가 시작된 타켓 요소
+      // this (event.currentTarget) ===> 이벤트가 걸린 요소
+      form.onclick = function (event) {
+        event.target.style.backgroundColor = "yellow";
+
+        setTimeout(() => {
+          alert(
+            "target = " + event.target.tagName + ", this = " + this.tagName
+          );
+          event.target.style.backgroundColor = "";
+        }, 0);
+      };
+    </script> -->
+  </body>
+</html>
