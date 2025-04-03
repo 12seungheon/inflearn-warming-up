@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-import List from "./components/List";
+import List from "./components/Lists";
 import Form from "./components/Form";
 
 function App() {
@@ -25,8 +25,9 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     let newTodo = {
-      id: Date.now().toString(),
+      id: Date.now(),
       title: value,
       completed: false,
     };
