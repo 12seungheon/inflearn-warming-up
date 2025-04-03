@@ -26,7 +26,7 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     let newTodo = {
-      id: Date.now(),
+      id: Date.now().toString(),
       title: value,
       completed: false,
     };

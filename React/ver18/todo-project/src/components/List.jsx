@@ -14,8 +14,6 @@ import {
   arrayMove, // 배열 순서 바꾸는 유틸
 } from "@dnd-kit/sortable";
 
-import List from "./List"; // 개별 아이템 컴포넌트
-
 export default function Lists({ todoData, setTodoData }) {
   // 👉 마우스 센서를 등록 (필수로 해줘야 드래그 작동함)
   const sensors = useSensors(useSensor(PointerSensor));
