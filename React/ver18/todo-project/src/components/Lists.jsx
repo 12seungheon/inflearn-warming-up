@@ -11,7 +11,7 @@ export default function List({ id, title, completed, todoData, setTodoData }) {
     setNodeRef, // DOM 요소 등록 (드래그 대상)
     transform, // 현재 드래그 위치 정보
     transition, // 드래그 애니메이션 전환
-  } = useSortable({ id });
+  } = useSortable({ id: id.toString() }); // id는 문자열로 넘겨야 함
 
   // 👉 드래그 중일 때 스타일 적용
   const style = {

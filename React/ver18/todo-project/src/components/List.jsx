@@ -43,13 +43,13 @@ export default function Lists({ todoData, setTodoData }) {
     >
       {/* 👉 정렬 가능한 리스트 설정 */}
       <SortableContext
-        items={todoData.map((item) => item.id)} // id 목록 넘김
+        items={todoData.map((item) => item.id.toString())} // id 목록 넘김
         strategy={verticalListSortingStrategy}
       >
         {/* 👉 각 아이템은 개별 List 컴포넌트로 렌더링 */}
         {todoData.map((item) => (
           <List
-            key={item.id}
+            key={item.id.toString()} // key는 문자열로 넘겨야 함
             id={item.id.toString()} // id는 문자열로 넘겨야 함
             title={item.title}
             completed={item.completed}
