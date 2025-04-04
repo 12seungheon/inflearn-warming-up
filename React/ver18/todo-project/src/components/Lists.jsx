@@ -1,52 +1,44 @@
-// src/components/Lists.jsx
-import React from "react";
+import React, { useCallback } from "react";
+import List from "./List";
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
+  arrayMove,
   SortableContext,
   verticalListSortingStrategy,
-  arrayMove,
 } from "@dnd-kit/sortable";
-import List from "./List"; // 이름 그대로 유지 👌
 
-export default function Lists({ todoData, setTodoData }) {
-  const sensors = useSensors(useSensor(PointerSensor));
+// 전체 할 일 목록 Lists 컴포넌트
+function Lists({ todoData, setTodoData }) {
+  // 드래그가 끝났을 때 실행
+  const handleDragEnd = useCallback(
+    (event) => {
+      const { active, over } = event;
 
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
+      if (active.id !== over?.id) {
+        const oldIndex = todoData.findIndex((item) => item.id === active.id);
+        const newIndex = todoData.findIndex((item) => item.id === over.id);
 
-    const oldIndex = todoData.findIndex(
-      (item) => item.id.toString() === active.id.toString()
-    );
-    const newIndex = todoData.findIndex(
-      (item) => item.id.toString() === over.id.toString()
-    );
+        // 기존 상태 유지 + 순서만 변경
+        const newData = arrayMove(todoData, oldIndex, newIndex).map((item) => ({
+          ...todoData.find((t) => t.id === item.id),
+        }));
 
-    setTodoData((items) => arrayMove(items, oldIndex, newIndex));
-  };
+        setTodoData(newData);
+      }
+    },
+    [todoData, setTodoData]
+  );
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
+    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext
-        items={todoData.map((item) => item.id.toString())}
+        items={todoData.map((item) => item.id)}
         strategy={verticalListSortingStrategy}
       >
         {todoData.map((item) => (
           <List
-            key={item.id.toString()}
-            id={item.id.toString()}
-            title={item.title}
-            completed={item.completed}
+            key={item.id}
+            item={item}
             todoData={todoData}
             setTodoData={setTodoData}
           />
@@ -55,3 +47,5 @@ export default function Lists({ todoData, setTodoData }) {
     </DndContext>
   );
 }
+
+export default React.memo(Lists);

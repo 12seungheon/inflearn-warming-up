@@ -1,58 +1,62 @@
-import { useState } from "react";
-import "./App.css";
-import List from "./components/Lists";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Form from "./components/Form";
+import Lists from "./components/Lists";
 
+// App 컴포넌트: Todo 앱의 루트 컴포넌트
 function App() {
-  const [todoData, setTodoData] = useState([
-    // {
-    //   id: 1,
-    //   title: "공부하기",
-    //   completed: false,
-    // },
-    // {
-    //   id: 2,
-    //   title: "운동하기",
-    //   completed: false,
-    // },
-    // {
-    //   id: 3,
-    //   title: "게임하기",
-    //   completed: false,
-    // },
-  ]);
-  const [value, setValue] = useState("");
+  // todoData: 전체 할 일 목록을 관리하는 state
+  const [todoData, setTodoData] = useState(() => {
+    // localStorage 에서 저장된 데이터를 불러옴 (새로고침해도 유지)
+    const storedData = localStorage.getItem("todoData");
+    return storedData ? JSON.parse(storedData) : [];
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // todoData 가 변경될 때마다 localStorage 에 저장
+  useEffect(() => {
+    localStorage.setItem("todoData", JSON.stringify(todoData));
+  }, [todoData]);
 
-    let newTodo = {
-      id: Date.now(),
-      title: value,
-      completed: false,
-    };
+  // 새로운 할 일 추가 함수
+  const addTodo = useCallback((newTodo) => {
+    setTodoData((prev) => [...prev, newTodo]);
+  }, []);
 
-    setTodoData([...todoData, newTodo]);
-    setValue("");
+  // todoData 업데이트 함수
+  const updateTodoData = useCallback((newData) => {
+    setTodoData(newData);
+  }, []);
+
+  // 총 할 일 개수 계산 (성능 최적화용 useMemo)
+  const totalCount = useMemo(() => todoData.length, [todoData]);
+
+  // 전체 할 일 삭제 함수
+  const clearAll = () => {
+    setTodoData([]);
   };
 
   return (
-    <>
-      <div className="flex items-center justify-center w-screen h-screen bg-blue-200">
-        <div className="w-full p-6 m-4 bg-white rounded shadow lg:w-3/4 lg:max-w-lg">
-          <div className="flex flex-col justify-between mb-3">
-            <h1>할 일 목록</h1>
-            <List todoData={todoData} setTodoData={setTodoData} />
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md p-4 bg-white rounded shadow">
+        <h1 className="text-2xl font-bold mb-2 text-center">📝 Todo App</h1>
+        <p className="text-center mb-4">총 할 일: {totalCount}개</p>
 
-            <Form
-              value={value}
-              handleSubmit={handleSubmit}
-              setValue={setValue}
-            />
-          </div>
-        </div>
+        {/* 할 일 추가 폼 */}
+        <Form addTodo={addTodo} />
+
+        {/* 전체 삭제 버튼 */}
+        {todoData.length > 0 && (
+          <button
+            onClick={clearAll}
+            className="mb-4 bg-red-500 text-white w-full py-2 rounded hover:bg-red-600"
+          >
+            전체 삭제
+          </button>
+        )}
+
+        {/* 할 일 목록 */}
+        <Lists todoData={todoData} setTodoData={updateTodoData} />
       </div>
-    </>
+    </div>
   );
 }
 
