@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import "./Row.css";
+import MovieModal from "./MovieModal";
 
 function Row({ title, id, fetchUrl, isLargeRow }) {
   const [movies, setMovie] = useState([]);
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const [movieSelected, setMovieSelected] = useState({});
   useEffect(() => {
     fetchMovieData();
   }, [fetchUrl]);
@@ -15,12 +17,25 @@ function Row({ title, id, fetchUrl, isLargeRow }) {
     setMovie(request.data.results);
     return request;
   };
+
+  const handleClick = (movie) => {
+    setModalOpen(true);
+    setMovieSelected(movie);
+  };
+
   return (
     <section>
       <h2>{title}</h2>
       <div className="slider">
         <div className="slider__arrow-left">
-          <span className="arrow">{"<"}</span>
+          <span
+            className="arrow"
+            onClick={() => {
+              document.getElementById(id).scrollLeft -= window.innerWidth - 80;
+            }}
+          >
+            {"<"}
+          </span>
         </div>
         <div id={id} className="row__posters">
           {movies.map((movie) => (
@@ -31,13 +46,25 @@ function Row({ title, id, fetchUrl, isLargeRow }) {
                 isLargeRow ? movie.poster_path : movie.backdrop_path
               } `}
               alt={movie.name}
+              onClick={() => handleClick(movie)}
             />
           ))}
-          <div className="slider__arrow-right">
-            <span className="arrow">{">"}</span>
-          </div>
+        </div>
+        <div className="slider__arrow-right">
+          <span
+            className="arrow"
+            onClick={() => {
+              document.getElementById(id).scrollLeft += window.innerWidth - 80;
+            }}
+          >
+            {">"}
+          </span>
         </div>
       </div>
+
+      {modalOpen && (
+        <MovieModal {...movieSelected} setModalOpen={setModalOpen} />
+      )}
     </section>
   );
 }
